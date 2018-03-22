@@ -22,6 +22,8 @@ import rospy
 from moveit_testing_sender.srv import *
 from geometry_msgs.msg import Pose
 
+from math import radians
+from tf.transformations import quaternion_from_euler, quaternion_multiply
 
 def hanoi(n, source, helper, target):
     print source, helper, target
@@ -46,13 +48,19 @@ def move_disk(start, dest):
     # pick disk up
     rospy.loginfo("start has %d disks", start["disks"])
     pose_above.position.z = 0.08
-    pose_above.position.x = 0.5
+    pose_above.position.x = 0.3
     pose_above.position.y = stack_pos[start["pos"]]
-    pose_above.orientation.y = 1.0
+    pose_above.orientation.x = q_new[0]
+    pose_above.orientation.y = q_new[1]
+    pose_above.orientation.z = q_new[2]
+    pose_above.orientation.w = q_new[3]
     pose_grip.position.z = heights[start["disks"]]
-    pose_grip.position.x = 0.5
+    pose_grip.position.x = 0.3
     pose_grip.position.y = stack_pos[start["pos"]]
-    pose_grip.orientation.y = 1.0
+    pose_grip.orientation.x = q_new[0]
+    pose_grip.orientation.y = q_new[1]
+    pose_above.orientation.z = q_new[2]
+    pose_above.orientation.w = q_new[3]
 
     pick_place = rospy.ServiceProxy('pick_place', PickPlace)
     resp = pick_place(pose_above, pose_grip, True)
@@ -82,13 +90,19 @@ def cleanup():
 
     # pick tower up
     pose_above.position.z = 0.03
-    pose_above.position.x = 0.5
+    pose_above.position.x = 0.3
     pose_above.position.y = stack_pos[target["pos"]]
-    pose_above.orientation.y = 1.0
+    pose_above.orientation.x = q_new[0]
+    pose_above.orientation.y = q_new[1]
+    pose_above.orientation.z = q_new[2]
+    pose_above.orientation.w = q_new[3]
     pose_grip.position.z = heights[1]
-    pose_grip.position.x = 0.5
+    pose_grip.position.x = 0.3
     pose_grip.position.y = stack_pos[target["pos"]]
-    pose_grip.orientation.y = 1.0
+    pose_grip.orientation.x = q_new[0]
+    pose_grip.orientation.y = q_new[1]
+    pose_grip.orientation.z = q_new[2]
+    pose_grip.orientation.w = q_new[3]
 
     pick_place = rospy.ServiceProxy('pick_place', PickPlace)
     resp = pick_place(pose_above, pose_grip, True)
@@ -119,6 +133,24 @@ def cleanup():
 
     rospy.loginfo("ready to home")
 
+def move_start():
+    pose = Pose()
+    print q_new
+
+    pose.position.z = 0.2
+    pose.position.x = 0.3
+    pose.position.y = stack_pos[1]
+    pose.orientation.x = q_new[0]
+    pose.orientation.y = q_new[1]
+    pose.orientation.z = q_new[2]
+    pose.orientation.w = q_new[3]
+
+    move_lin = rospy.ServiceProxy('move_lin', MoveLin)
+    resp = move_lin(pose)
+    if resp.success == False:
+        rospy.logerr("moving to start pos failed")
+        return False
+
 
 source = {"pos": 1, "disks": 3}
 target = {"pos": 3, "disks": 0}
@@ -126,6 +158,11 @@ helper = {"pos": 2, "disks": 0}
 
 heights = {3: 0.048, 2: 0.026, 1: 0.004, 0: 0.004}
 stack_pos = {1: -0.2, 2: 0.0, 3: 0.2}
+
+# gripper orientation for pick and place
+q_orig = quaternion_from_euler(0, radians(90), 0)
+q_rot = quaternion_from_euler(0, radians(90), radians(90))
+q_new = quaternion_multiply(q_rot, q_orig)
 
 if __name__ == '__main__':
     rospy.init_node('tower_hanoi')
