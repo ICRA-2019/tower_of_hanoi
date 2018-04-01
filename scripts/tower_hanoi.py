@@ -19,7 +19,7 @@
 #
 
 import rospy
-from moveit_testing_sender.srv import *
+from rll_msgs.srv import *
 from geometry_msgs.msg import Pose
 
 from math import radians
