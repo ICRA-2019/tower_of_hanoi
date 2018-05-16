@@ -156,7 +156,7 @@ source = {"pos": 1, "disks": 3}
 target = {"pos": 3, "disks": 0}
 helper = {"pos": 2, "disks": 0}
 
-heights = {3: 0.048, 2: 0.026, 1: 0.004, 0: 0.004}
+heights = {3: 0.048, 2: 0.026, 1: 0.006, 0: 0.006}
 stack_pos = {1: -0.2, 2: 0.0, 3: 0.2}
 
 # gripper orientation for pick and place
