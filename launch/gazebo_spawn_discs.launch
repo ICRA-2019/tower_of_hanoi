@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- spawn grasp objects in Gazebo -->
+  <param name="disc1" command="$(find xacro)/xacro --inorder $(find tower_of_hanoi)/urdf/disc1.urdf.xacro" />
+  <param name="disc2" command="$(find xacro)/xacro --inorder $(find tower_of_hanoi)/urdf/disc2.urdf.xacro" />
+  <param name="disc3" command="$(find xacro)/xacro --inorder $(find tower_of_hanoi)/urdf/disc3.urdf.xacro" />
+
+  <node name="disc1_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -param disc1 -x 0.3 -y -0.2 -model disc1" />
+  <node name="disc2_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -param disc2 -x 0.3 -y -0.2 -z 0.025 -model disc2" />
+  <node name="disc3_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -param disc3 -x 0.3 -y -0.2 -z 0.05 -model disc3" />
+
+</launch>
