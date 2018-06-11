@@ -63,7 +63,7 @@ def move_disk(start, dest):
     pose_above.orientation.w = q_new[3]
 
     pick_place = rospy.ServiceProxy('pick_place', PickPlace)
-    resp = pick_place(pose_above, pose_grip, True)
+    resp = pick_place(pose_above, pose_grip, True, "")
     if resp.success == False:
         rospy.logerr("picking up disk failed")
         return False
@@ -76,7 +76,7 @@ def move_disk(start, dest):
     pose_above.position.y = stack_pos[dest["pos"]]
     pose_grip.position.z = heights[dest["disks"]+1]
     pose_grip.position.y = stack_pos[dest["pos"]]
-    resp = pick_place(pose_above, pose_grip, False)
+    resp = pick_place(pose_above, pose_grip, False, "")
     if resp.success == False:
         rospy.logerr("placing disk failed")
         return False
@@ -105,7 +105,7 @@ def cleanup():
     pose_grip.orientation.w = q_new[3]
 
     pick_place = rospy.ServiceProxy('pick_place', PickPlace)
-    resp = pick_place(pose_above, pose_grip, True)
+    resp = pick_place(pose_above, pose_grip, True, "")
     if resp.success == False:
         rospy.logerr("moving tower failed")
         return False
@@ -116,7 +116,7 @@ def cleanup():
     pose_above.position.y = stack_pos[source["pos"]]
     pose_grip.position.y = stack_pos[source["pos"]]
     pick_place = rospy.ServiceProxy('pick_place', PickPlace)
-    resp = pick_place(pose_above, pose_grip, False)
+    resp = pick_place(pose_above, pose_grip, False, "")
     if resp.success == False:
         rospy.logerr("moving tower failed")
         return False
