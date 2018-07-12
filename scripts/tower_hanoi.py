@@ -19,7 +19,9 @@
 #
 
 import rospy
+import actionlib
 from rll_msgs.srv import *
+from rll_msgs.msg import *
 from geometry_msgs.msg import Pose
 
 from math import radians
@@ -151,7 +153,6 @@ def move_start():
         rospy.logerr("moving to start pos failed")
         return False
 
-
 source = {"pos": 1, "disks": 3}
 target = {"pos": 3, "disks": 0}
 helper = {"pos": 2, "disks": 0}
@@ -164,8 +165,24 @@ q_orig = quaternion_from_euler(0, radians(90), 0)
 q_rot = quaternion_from_euler(0, radians(90), radians(90))
 q_new = quaternion_multiply(q_rot, q_orig)
 
+def hanoi_full():
+    hanoi(source["disks"], source, helper, target)
+    cleanup()
+
+class MoveClient:
+    def __init__(self):
+        self.server = actionlib.SimpleActionServer("move_client", DefaultMoveIfaceAction, self.execute, False)
+        self.server.start()
+
+    def execute(self, req):
+        hanoi_full()
+        self.server.set_succeeded()
+
+
 if __name__ == '__main__':
     rospy.init_node('tower_hanoi')
 
-    hanoi(source["disks"], source, helper, target)
-    cleanup()
+
+    server = MoveClient()
+
+    rospy.spin()
