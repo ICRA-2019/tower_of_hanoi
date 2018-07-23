@@ -168,6 +168,9 @@ q_new = quaternion_multiply(q_rot, q_orig)
 def hanoi_full():
     hanoi(source["disks"], source, helper, target)
     cleanup()
+    source["disks"] = 3
+    target["disks"] = 0
+    helper["disks"] = 0
 
 class MoveClient:
     def __init__(self):
