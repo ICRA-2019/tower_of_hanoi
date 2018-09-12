@@ -128,7 +128,7 @@ def cleanup():
     # move a little higher before homing
     pose_above.position.z = 0.1
     move_lin = rospy.ServiceProxy('move_lin', MoveLin)
-    resp = move_lin(pose_above)
+    resp = move_lin(pose_above, True)
     if resp.success == False:
         rospy.logerr("moving in final pos failed")
         return False
@@ -148,7 +148,7 @@ def move_start():
     pose.orientation.w = q_new[3]
 
     move_lin = rospy.ServiceProxy('move_lin', MoveLin)
-    resp = move_lin(pose)
+    resp = move_lin(pose, True)
     if resp.success == False:
         rospy.logerr("moving to start pos failed")
         return False
