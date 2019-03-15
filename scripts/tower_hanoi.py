@@ -135,24 +135,6 @@ def cleanup():
 
     rospy.loginfo("ready to home")
 
-def move_start():
-    pose = Pose()
-    print q_new
-
-    pose.position.z = 0.2
-    pose.position.x = 0.3
-    pose.position.y = stack_pos[1]
-    pose.orientation.x = q_new[0]
-    pose.orientation.y = q_new[1]
-    pose.orientation.z = q_new[2]
-    pose.orientation.w = q_new[3]
-
-    move_lin = rospy.ServiceProxy('move_lin', MoveLin)
-    resp = move_lin(pose, True)
-    if resp.success == False:
-        rospy.logerr("moving to start pos failed")
-        return False
-
 source = {"pos": 1, "disks": 3}
 target = {"pos": 3, "disks": 0}
 helper = {"pos": 2, "disks": 0}
