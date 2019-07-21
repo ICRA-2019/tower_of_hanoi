@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot" default="iiwa" />
+
+  <node ns="$(arg robot)" name="move_iface" pkg="rll_move" type="move_iface_full" respawn="false" output="screen">
+    <param name="no_gripper" value="false"/>
+    <remap from="/use_sim_time" to="/$(arg robot)/use_sim_time" />
+    <remap from="/clock" to="/$(arg robot)/clock" />
+  </node>
+
+</launch>
