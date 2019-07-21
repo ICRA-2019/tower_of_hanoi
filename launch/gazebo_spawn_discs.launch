@@ -1,10 +1,13 @@
 <?xml version="1.0"?>
 <launch>
+  <arg name="robot" default="iiwa"/>
 
   <!-- spawn grasp objects in Gazebo -->
   <param name="disc1" command="$(find xacro)/xacro --inorder $(find tower_of_hanoi)/urdf/disc1.urdf.xacro" />
   <param name="disc2" command="$(find xacro)/xacro --inorder $(find tower_of_hanoi)/urdf/disc2.urdf.xacro" />
   <param name="disc3" command="$(find xacro)/xacro --inorder $(find tower_of_hanoi)/urdf/disc3.urdf.xacro" />
+
+  <remap from="/gazebo/spawn_urdf_model" to="/$(arg robot)/gazebo/spawn_urdf_model" />
 
   <node name="disc1_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -param disc1 -x 0.3 -y -0.2 -model disc1" />
   <node name="disc2_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -param disc2 -x 0.3 -y -0.2 -z 0.025 -model disc2" />
