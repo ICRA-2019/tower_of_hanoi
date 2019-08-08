@@ -87,6 +87,8 @@ def move_disk(start, dest):
     rospy.loginfo("place job finished")
     dest["disks"] += 1
 
+    return True
+
 
 def cleanup():
     pose_above = Pose()
