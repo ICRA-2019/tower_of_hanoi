@@ -20,28 +20,29 @@
 
 import rospy
 import actionlib
-from rll_msgs.srv import *
-from rll_msgs.msg import *
+from rll_msgs.srv import PickPlace, MoveLin
+from rll_msgs.msg import DefaultMoveIfaceAction
 from geometry_msgs.msg import Pose
 
 from math import radians
 from tf.transformations import quaternion_from_euler, quaternion_multiply
 
+
 def hanoi(n, source, helper, target):
-    print source, helper, target
     if n > 0:
         # move tower of size n - 1 to helper:
         hanoi(n - 1, source, target, helper)
 
         # move disk from source peg to target peg
         if source["disks"]:
-            status = move_disk(source, target)
-            if (status == False):
+            success = move_disk(source, target)
+            if not success:
                 rospy.logerr("error, exiting...")
                 quit()
 
         # move tower of size n-1 from helper to target
         hanoi(n - 1, helper, source, target)
+
 
 def move_disk(start, dest):
     pose_above = Pose()
@@ -66,7 +67,7 @@ def move_disk(start, dest):
 
     pick_place = rospy.ServiceProxy('pick_place', PickPlace)
     resp = pick_place(pose_above, pose_grip, True, "")
-    if resp.success == False:
+    if not resp.success:
         rospy.logerr("picking up disk failed")
         return False
 
@@ -76,15 +77,16 @@ def move_disk(start, dest):
     # place disk
     rospy.loginfo("dest has %d disks", dest["disks"])
     pose_above.position.y = stack_pos[dest["pos"]]
-    pose_grip.position.z = heights[dest["disks"]+1]
+    pose_grip.position.z = heights[dest["disks"] + 1]
     pose_grip.position.y = stack_pos[dest["pos"]]
     resp = pick_place(pose_above, pose_grip, False, "")
-    if resp.success == False:
+    if not resp.success:
         rospy.logerr("placing disk failed")
         return False
 
     rospy.loginfo("place job finished")
     dest["disks"] += 1
+
 
 def cleanup():
     pose_above = Pose()
@@ -108,7 +110,7 @@ def cleanup():
 
     pick_place = rospy.ServiceProxy('pick_place', PickPlace)
     resp = pick_place(pose_above, pose_grip, True, "")
-    if resp.success == False:
+    if not resp.success:
         rospy.logerr("moving tower failed")
         return False
 
@@ -119,7 +121,7 @@ def cleanup():
     pose_grip.position.y = stack_pos[source["pos"]]
     pick_place = rospy.ServiceProxy('pick_place', PickPlace)
     resp = pick_place(pose_above, pose_grip, False, "")
-    if resp.success == False:
+    if not resp.success:
         rospy.logerr("moving tower failed")
         return False
 
@@ -129,7 +131,7 @@ def cleanup():
     pose_above.position.z = 0.1
     move_lin = rospy.ServiceProxy('move_lin', MoveLin)
     resp = move_lin(pose_above, True)
-    if resp.success == False:
+    if not resp.success:
         rospy.logerr("moving in final pos failed")
         return False
 
@@ -147,6 +149,7 @@ q_orig = quaternion_from_euler(0, radians(90), 0)
 q_rot = quaternion_from_euler(0, radians(90), radians(90))
 q_new = quaternion_multiply(q_rot, q_orig)
 
+
 def hanoi_full():
     hanoi(source["disks"], source, helper, target)
     cleanup()
@@ -154,9 +157,12 @@ def hanoi_full():
     target["disks"] = 0
     helper["disks"] = 0
 
+
 class MoveClient:
     def __init__(self):
-        self.server = actionlib.SimpleActionServer("move_client", DefaultMoveIfaceAction, self.execute, False)
+        self.server = actionlib.SimpleActionServer("move_client",
+                                                   DefaultMoveIfaceAction,
+                                                   self.execute, False)
         self.server.start()
 
     def execute(self, req):
@@ -166,7 +172,6 @@ class MoveClient:
 
 if __name__ == '__main__':
     rospy.init_node('tower_hanoi')
-
 
     server = MoveClient()
 
