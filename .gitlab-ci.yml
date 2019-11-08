@@ -18,6 +18,7 @@ variables:
 
   ROSINSTALL_FILENAME: ".ci.rosinstall"
   ROS_DISTRO: "kinetic"
+  ROS_REPO: "ros"
 
   # install the rll_sdk 
   ROSINSTALL_SDK: "- git: {local-name: rll_sdk, uri: 'https://gitlab.ipr.kit.edu/rll/rll_sdk.git', version: master}"
