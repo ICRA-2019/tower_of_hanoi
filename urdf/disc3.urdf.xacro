@@ -21,10 +21,11 @@
       </geometry>
     </collision>
   </link>
+
   <gazebo reference="disc3">
     <mu1>10.0</mu1>
     <mu2>10.0</mu2>
-    <gravity>true</gravity>
+    <maxVel>0.0</maxVel>
   </gazebo>
 
 </robot>
